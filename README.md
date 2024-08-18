@@ -9,6 +9,13 @@ Steps for Installation
 - Run python manage.py migrate 
 - Run python manage.py runserver
 
+ ---------- or ------------ 
+
+- Clone the repository. 
+- Navigate to repo's root directory.
+- Make sure you have docker installed.
+- RUN docker-compose up --build
+
 https://api.postman.com/collections/28483148-037d2cdb-d6d5-4fb8-b461-5fab81dbc4f1?access_key=PMAT-01J5JGEMDMKG4Y1PY73YB5GX2Q
 Access the APIs Curls using above postman collection. 
 

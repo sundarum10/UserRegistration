@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import  os
+from urllib.parse import urlparse
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -82,11 +84,11 @@ WSGI_APPLICATION = 'user_registration.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'user_registration',
-        'USER': 'postgres',
-        'PASSWORD': 'Sundarum@10',
-        'HOST': 'localhost',  # or '127.0.0.1'
-        'PORT': '5432',       # default PostgreSQL port
+        'NAME': os.getenv('POSTGRES_DB', 'user_registration'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Sundarum@10'),
+        'HOST': os.getenv('DB_HOST', 'db'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

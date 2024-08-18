@@ -4,6 +4,9 @@ from .models import FriendRequest
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for custom_user
+    """
     class Meta:
         model = CustomUser
         fields = ['name', 'email', 'password', 'phone_number']

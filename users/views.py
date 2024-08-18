@@ -108,3 +108,19 @@ class RejectFriendRequestView(generics.UpdateAPIView):
             friend_request.save()
             return Response(FriendRequestSerializer(friend_request).data, status=status.HTTP_200_OK)
         return Response({'detail': 'Friend request cannot be rejected.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListFriendsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = FriendRequestSerializer
+
+    def get_queryset(self):
+        status = self.request.query_params.get('status')
+
+        if status not in ['pending', 'accepted', 'rejected']:
+            return FriendRequest.objects.none()  # Return an empty queryset if the status is invalid
+
+        return FriendRequest.objects.filter(
+            receiver=self.request.user,
+            status=status
+        )

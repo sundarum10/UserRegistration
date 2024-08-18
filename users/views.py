@@ -9,6 +9,8 @@ from django.db.models import Q
 from rest_framework import generics, status
 from .models import FriendRequest, CustomUser
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from datetime import timedelta
 
 
 class CreateUserView(APIView):
@@ -71,9 +73,20 @@ class SendFriendRequestView(generics.CreateAPIView):
         # Prevent sending multiple friend requests to the same user
         if FriendRequest.objects.filter(sender=request.user, receiver=receiver).exists():
             if request.user == receiver:
-                return Response({'detail': 'sender and receiver can\'t be same'}, status=status.HTTP_400_BAD_REQUEST)
-
+                return Response({'detail': 'You cannot send a friend request to yourself.'},
+                                status=status.HTTP_400_BAD_REQUEST)
             return Response({'detail': 'Friend request already sent.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check the rate limit
+        one_minute_ago = timezone.now() - timedelta(minutes=1)
+        recent_requests = FriendRequest.objects.filter(
+            sender=request.user,
+            created_at__gte=one_minute_ago
+        ).count()
+
+        if recent_requests >= 3:
+            return Response({'detail': 'Rate limit exceeded. You can only send 3 requests per minute.'},
+                            status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         friend_request = FriendRequest(sender=request.user, receiver=receiver)
         friend_request.save()
